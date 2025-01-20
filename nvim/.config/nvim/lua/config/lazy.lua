@@ -16,12 +16,9 @@ end
 -- put lazy into runtimepath(rtp) for neovim
 vim.opt.rtp:prepend(lazypath)
 
-vim.g.mapleader = " "
-vim.g.maplocalleader = "\\"
-
 require("lazy").setup({
   spec = {
-    { "folke/tokyonight.nvim", config = function() vim.cmd.colorscheme "tokyonight" end },
+    { "folke/tokyonight.nvim",  config = function() vim.cmd.colorscheme "tokyonight" end },
     -- add LazyVim and import its plugins
     --{ "LazyVim/LazyVim", import = "lazyvim.plugins"},
     -- import/override with your plugins
@@ -35,5 +32,4 @@ require("lazy").setup({
     --  have outdated releases, which may break your Neovim install.
     version = false,
   },
-  install = { colorscheme = { "habamax" } },
 })

@@ -7,6 +7,16 @@ local M = {}
 local live_multigrep = function(opts)
   opts = opts or {}
   opts.cwd = opts.cwd or vim.uv.cwd()
+  opts.shortcuts = opts.shortcuts
+      or {
+        ["l"] = "*.lua",
+        ["v"] = "*.vim",
+        ["n"] = "*.{vim,lua}",
+        ["c"] = "*.c",
+        ["r"] = "*.rs",
+        ["g"] = "*.go",
+      }
+  opts.pattern = opts.pattern or "%s"
   local finder = finders.new_async_job {
     command_generator = function(prompt)
       if not prompt or prompt == "" then
@@ -22,7 +32,14 @@ local live_multigrep = function(opts)
 
       if pieces[2] then
         table.insert(args, "-g")
-        table.insert(args, pieces[2])
+        local pattern
+        if opts.shortcuts[pieces[2]] then
+          pattern = opts.shortcuts[pieces[2]]
+        else
+          pattern = pieces[2]
+        end
+
+        table.insert(args, string.format(opts.pattern, pattern))
       end
 
       ---@diagnostic disable-next-line: deprecated
@@ -44,7 +61,7 @@ local live_multigrep = function(opts)
 end
 
 M.setup = function()
-  vim.keymap.set("n", "<leader>sg", live_multigrep)
+  vim.keymap.set("n", "<leader>sg", live_multigrep, { desc = '[S]earch by [G]rep' })
 end
 
 return M
