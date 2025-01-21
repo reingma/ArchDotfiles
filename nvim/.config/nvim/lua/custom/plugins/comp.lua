@@ -1,22 +1,45 @@
 return {
   {
-    'saghen/blink.cmp',
-    dependencies = 'rafamadriz/friendly-snippets',
+    "saghen/blink.cmp",
+    dependencies = {
+      "rafamadriz/friendly-snippets",
+      "kristijanhusak/vim-dadbod-completion",
+    },
 
-    version = '*',
+    version = "*",
     opts = {
       -- 'default' for mappings similar to built-in completion
-      keymap = { preset = 'default' },
+      keymap = { preset = "default" },
 
       appearance = {
         use_nvim_cmp_as_default = true,
-        nerd_font_variant = 'mono'
+        nerd_font_variant = "mono",
       },
 
       signature = { enabled = true },
       sources = {
-        default = { 'lsp', 'path', 'snippets', 'buffer', },
+        default = {
+          "lsp",
+          "path",
+          "snippets",
+          "buffer",
+          --"copilot",
+          "dadbod",
+        },
+        providers = {
+          lsp = {
+            name = "lsp",
+            enabled = true,
+            module = "blink.cmp.sources.lsp",
+            score_offset = 1000,
+          },
+          dadbod = {
+            name = "Dadbod",
+            module = "vim_dadbod_completion.blink",
+            score_offset = 950,
+          },
+        },
       },
     },
-  }
+  },
 }
