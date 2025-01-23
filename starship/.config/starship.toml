@@ -1,8 +1,16 @@
 [aws]
 symbol = "  "
 
+[os]
+format = "on [$name]($style)"
+style = "bold blue"
+disabled = false
+
 [buf]
 symbol = " "
+
+[direnv]
+disabled = false
 
 [c]
 symbol = " "
@@ -173,3 +181,8 @@ symbol = " "
 
 [gradle]
 symbol = " "
+
+[time]
+disabled = false
+format = '[$time]($style) '
+time_format = '%T'
