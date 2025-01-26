@@ -1,4 +1,0 @@
-#!/usr/bin/env sh
-# shellcheck disable=1090
-. "$(dirname "$(realpath "$0")")/i3tools.sh"
-i3tool "$@"

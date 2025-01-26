@@ -11,6 +11,10 @@ set $up k
 set $right l
 # Your preferred terminal emulator
 set $term ghostty
+# Browser
+set $browser qutebrowser
+# Reader
+set $reader zathura
 # Your preferred application launcher
 set $menu wmenu-run
 # Screen lock options
@@ -19,7 +23,7 @@ set $lock swaylock
 ### Output configuration
 #
 # Default wallpaper (more resolutions are available in /usr/share/backgrounds/sway/)
-output * bg /usr/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png fill
+output * bg ~/Pictures/stormlight.png fill
 #
 # Example configuration:
 #
@@ -60,6 +64,9 @@ output * bg /usr/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png fill
 #
     # Start a terminal
     bindsym $mod+t exec $term
+
+	# Launches browser
+    bindsym $mod+b exec $browser
 
     # Kill focused window
     bindsym $mod+Shift+q kill
@@ -106,7 +113,23 @@ output * bg /usr/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png fill
     bindsym $mod+Shift+Down move down
     bindsym $mod+Shift+Up move up
     bindsym $mod+Shift+Right move right
-#
+
+	set $wslaunch ~/.local/scripts_no_path/i3tools slaunch
+
+# Monitors
+	set $tv "DP-2"
+	set $screen "eDP-1"
+	workspace $ws1 output $tv $screen
+	workspace $ws2 output $tv $screen
+	workspace $ws3 output $tv $screen
+	workspace $ws4 output $tv $screen
+	workspace $ws5 output $tv $screen
+	workspace $ws6 output $tv $screen
+	workspace $ws7 output $tv $screen
+	workspace $ws8 output $tv $screen
+	workspace $ws9 output $tv $screen
+	workspace $ws0 output $tv $screen
+	workspace 11 output $screen
 # Workspaces:
 	set $ws1 "1:"
 	set $ws2 "2:"
@@ -121,13 +144,13 @@ output * bg /usr/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png fill
     # Switch to workspace
     bindsym $mod+1 workspace $ws1
     bindsym $mod+2 workspace $ws2
-    bindsym $mod+3 exec i3tools slaunch $ws3 "ghostty"
+    bindsym $mod+3 exec $wslaunch $ws3 "ghostty"
     bindsym $mod+4 workspace $ws4
-    bindsym $mod+5 workspace $ws5
+    bindsym $mod+5 exec $wslaunch $ws5 "zathura"
     bindsym $mod+6 workspace $ws6
-    bindsym $mod+7 workspace $ws7
+    bindsym $mod+7 exec $wslaunch $ws7 "obsidian"
     bindsym $mod+8 workspace $ws8
-    bindsym $mod+9 workspace $ws9
+    bindsym $mod+9 exec $wslaunch $ws9 "discord"
     bindsym $mod+0 workspace $ws10
     # Move focused container to workspace
     bindsym $mod+Shift+1 move container to workspace number 1
@@ -148,8 +171,8 @@ output * bg /usr/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png fill
     # You can "split" the current object of your focus with
     # $mod+b or $mod+v, for horizontal and vertical splits
     # respectively.
-    bindsym $mod+b splith
-    bindsym $mod+v splitv
+    bindsym $mod+Shift+b splith
+    bindsym $mod+Shift+v splitv
 
     # Switch the current container between different layout styles
     bindsym $mod+s layout stacking
