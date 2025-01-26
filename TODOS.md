@@ -12,3 +12,7 @@ sway
 waybar
 sway idle and so on
 tmux
+nushell
+carapace
+paru
+jq
