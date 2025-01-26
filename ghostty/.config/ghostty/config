@@ -1,1 +1,2 @@
 command = /usr/bin/nu --login --interactive
+theme = tokyonight

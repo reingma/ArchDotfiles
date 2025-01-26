@@ -1,6 +1,3 @@
-setup direnv
-setup tmux
-setup shell
 setup sway
 setup ansible with all required software here
 
@@ -14,3 +11,4 @@ clipboard
 sway
 waybar
 sway idle and so on
+tmux

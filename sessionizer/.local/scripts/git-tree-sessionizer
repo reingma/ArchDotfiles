@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+
+if [[ $# -eq 1 ]]; then
+	tree_data=$(git worktree list 2> /dev/null | rg -v 'bare' | head -n 1)
+else
+	tree_data=$(git worktree list 2> /dev/null | rg -v 'bare' | fzf)
+fi
+
+session_loc=$(echo $tree_data | cut -d' ' -f1)
+rev_num=$(echo $tree_data | cut -d' ' -f2)
+branch=$(echo $tree_data | cut -d' ' -f3)
+
+
+if [[ -z $session_loc ]]; then
+	exit 0
+fi
+
+session_pre_name=$(dirname "$session_loc")
+session_base=$(basename "$session_pre_name")
+if [[ $rev_num != "(bare)" ]]; then
+	session_name=$(echo $session_base/$rev_num/$branch | tr "./" "_")
+else
+	session_name=$(basename "$session_loc" | tr . ___)
+fi
+tmux_running=$(pgrep tmux)
+
+if [[ -z $TMUX ]] && [[ -z $tmux_running ]]; then
+	echo "hello"
+	tmux new-session -s $session_name -c $session_loc
+	exit 0
+fi
+
+if ! tmux has-session -t "$session_name" 2> /dev/null; then
+	echo "$session_name"
+	tmux new-session -ds "$session_name" -c "$session_loc"
+fi
+
+tmux switch-client -t "$session_name"

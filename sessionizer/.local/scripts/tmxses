@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+
+if [[ $# -eq 1 ]]; then
+	session_loc=$1
+else
+	session_loc=$(find ~/dev/university/ ~/dev/projects/ -mindepth 1 -maxdepth 1 -type d -printf '%p\n' | sort | uniq | fzf)
+fi
+
+if [[ -z $session_loc ]]; then
+	exit 0
+fi
+
+session_name=$(basename "$session_loc" | tr . ___)
+tmux_running=$(pgrep tmux)
+
+if [[ -z $TMUX ]] && [[ -z $tmux_running ]]; then
+	tmux new-session -s "$session_name" -c "$session_loc"
+	exit 0
+fi
+
+if ! tmux has-session -t "$session_name" 2>/dev/null; then
+	tmux new-session -ds "$session_name" -c "$session_loc"
+fi
+if [[ -z $TMUX ]]; then
+	tmux attach -t "$session_name"
+else
+	tmux switch-client -t "$session_name"
+	#tmux send-keys -t "$session_name".0 "git-tree-sessionizer gahgha" ENTER
+fi
