@@ -143,7 +143,7 @@ output * bg ~/Pictures/stormlight.png fill
 	set $ws0 "10:"
     # Switch to workspace
     bindsym $mod+1 workspace $ws1
-    bindsym $mod+2 workspace $ws2
+    bindsym $mod+2 exec $wslaunch $ws2 "firefox"
     bindsym $mod+3 exec $wslaunch $ws3 "ghostty"
     bindsym $mod+4 workspace $ws4
     bindsym $mod+5 exec $wslaunch $ws5 "zathura"
