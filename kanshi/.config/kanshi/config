@@ -1,0 +1,8 @@
+profile {
+	output eDP-1 disable
+	output DP-2 position 0,0
+}
+
+profile {
+	output eDP-1 enable scale 2
+}
