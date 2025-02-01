@@ -16,3 +16,8 @@ nushell
 carapace
 paru
 jq
+obsidian
+youtube music
+discord
+qutebrowser
+kanshi
