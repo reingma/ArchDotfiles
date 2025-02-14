@@ -2,6 +2,7 @@ vim.g.termguicolors = true
 vim.opt.termguicolors = true
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
+vim.g.tex_flavor = "latex"
 
 require("config.lazy")
 --leader key
