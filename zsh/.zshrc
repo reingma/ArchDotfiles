@@ -63,3 +63,6 @@ session_widget() tmxses
 zle -N session_widget
 
 bindkey "^f" session_widget
+
+alias cd=z
+alias ls=exa
