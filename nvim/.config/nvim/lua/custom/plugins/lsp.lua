@@ -42,6 +42,8 @@ return {
         rust_analyzer = true,
         templ = true,
         pyright = true,
+        gopls = true,
+        zls = true,
         ts_ls = {
           root_dir = require("lspconfig").util.root_pattern("package.json"),
           single_file = false,

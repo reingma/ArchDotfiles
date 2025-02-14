@@ -21,3 +21,6 @@ youtube music
 discord
 qutebrowser
 kanshi
+zsh
+yq
+htmlq

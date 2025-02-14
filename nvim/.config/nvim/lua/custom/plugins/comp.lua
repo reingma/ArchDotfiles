@@ -2,7 +2,7 @@ return {
   {
     "saghen/blink.cmp",
     dependencies = {
-      "rafamadriz/friendly-snippets",
+      "L3MON4D3/LuaSnip",
       "kristijanhusak/vim-dadbod-completion",
     },
 
@@ -10,6 +10,8 @@ return {
     opts = {
       -- 'default' for mappings similar to built-in completion
       keymap = { preset = "default" },
+
+      snippets = { preset = "luasnip" },
 
       appearance = {
         use_nvim_cmp_as_default = true,
@@ -22,7 +24,7 @@ return {
           "lsp",
           "path",
           "snippets",
-          "buffer",
+          --"buffer",
           --"copilot",
           "dadbod",
         },
