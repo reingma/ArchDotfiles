@@ -13,7 +13,7 @@ return {
       { "<leader>q", group = "[Q]uickfix" },
       { "<leader>c", group = "[C]ode" },
       { "<leader>u", group = "[U]ndo" },
-      { "<leader>h", group = "[H]elp gitsigns" },
+      { "<leader>h", group = "[H]arpoon and git [H]elp" },
       { "<leader>x", group = "E[x]ceptions and E[x]ecutions" },
       --{ '<leader>w', proxy = '<c-w>',   group = 'windows' },
     })

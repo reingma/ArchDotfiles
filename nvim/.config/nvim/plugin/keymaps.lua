@@ -6,7 +6,10 @@ vim.keymap.set("n", "<C-d>", "<C-d>zz", { desc = "Scroll down" })
 vim.keymap.set("n", "<C-u>", "<C-u>zz", { desc = "Scroll up" })
 vim.keymap.set("n", "n", "nzzzv")
 vim.keymap.set("n", "N", "Nzzzv")
-
+vim.keymap.set("n", "<c-j>", "<c-w><c-j>")
+vim.keymap.set("n", "<c-k>", "<c-w><c-k>")
+vim.keymap.set("n", "<c-l>", "<c-w><c-l>")
+vim.keymap.set("n", "<c-h>", "<c-w><c-h>")
 -- Quickfix keymaps
 vim.keymap.set("n", "<leader>qj", "<cmd>cnext<CR>", { desc = "[Q]uickfix [J](down)" })
 vim.keymap.set("n", "<leader>qk", "<cmd>cprev<CR>", { desc = "[Q]uickfix [K](up)" })
