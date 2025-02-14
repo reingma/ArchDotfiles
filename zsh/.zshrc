@@ -58,3 +58,8 @@ eval "$(starship init zsh)"
 eval "$(zoxide init zsh)"
 export ZVM_VI_SURROUND_BINDKEY="s-prefix"
 if [ "$TMUX" = "" ]; then tmux; fi
+
+session_widget() tmxses
+zle -N session_widget
+
+bindkey "^f" session_widget
