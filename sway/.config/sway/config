@@ -58,6 +58,12 @@ exec kanshi
 # You can get the names of your inputs by running: swaymsg -t get_inputs
 # Read `man 5 sway-input` for more information about this section.
 
+mode "gaming" {
+    bindsym $mod+Escape mode "default"
+}
+
+bindsym $mod+Shift+g mode "gaming"
+
 ### Key bindings
 #
 # Basics:

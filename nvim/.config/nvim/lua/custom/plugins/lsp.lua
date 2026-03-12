@@ -44,6 +44,9 @@ return {
         pyright = true,
         gopls = true,
         zls = true,
+        hls = true,
+        marksman = true,
+        neocmake = true,
         ts_ls = {
           root_dir = require("lspconfig").util.root_pattern("package.json"),
           single_file = false,
@@ -75,7 +78,7 @@ return {
         },
         clangd = {
           init_options = { clangdFileStatus = true },
-          filetypes = { "c" },
+          filetypes = { "c", "cpp", "objc", "objcpp" },
         },
         tailwindcss = true,
       }
