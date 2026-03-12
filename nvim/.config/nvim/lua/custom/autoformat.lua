@@ -1,11 +1,15 @@
 local setup = function()
   -- Autoformatting Setup
-  local conform = require "conform"
-  conform.setup {
+  local conform = require("conform")
+  conform.setup({
     formatters_by_ft = {
+      cpp = { "clang-format" },
+      c = { "clang-format" },
       lua = { "stylua" },
+      markdown = { "markdownlint-cli2", "prettier" },
+      sh = { "shfmt" },
     },
-  }
+  })
 
   conform.formatters.injected = {
     options = {
@@ -16,16 +20,17 @@ local setup = function()
     },
   }
 
-  vim.keymap.set("n", "<leader>f", function() require("conform").format { async = true, lsp_fallback = true } end,
-    { desc = "[F]ormat buffer" })
+  vim.keymap.set("n", "<leader>f", function()
+    require("conform").format({ async = true, lsp_fallback = true })
+  end, { desc = "[F]ormat buffer" })
   vim.api.nvim_create_autocmd("BufWritePre", {
     group = vim.api.nvim_create_augroup("custom-conform", { clear = true }),
     callback = function(args)
-      require("conform").format {
+      require("conform").format({
         bufnr = args.buf,
         lsp_fallback = true,
         quiet = true,
-      }
+      })
     end,
   })
 end

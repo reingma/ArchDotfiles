@@ -10,6 +10,7 @@ vim.keymap.set("n", "<c-j>", "<c-w><c-j>")
 vim.keymap.set("n", "<c-k>", "<c-w><c-k>")
 vim.keymap.set("n", "<c-l>", "<c-w><c-l>")
 vim.keymap.set("n", "<c-h>", "<c-w><c-h>")
+vim.keymap.set("n", "<leader>er", vim.diagnostic.open_float, { desc = "[E]rror [R]eport" })
 -- Quickfix keymaps
 vim.keymap.set("n", "<leader>qj", "<cmd>cnext<CR>", { desc = "[Q]uickfix [J](down)" })
 vim.keymap.set("n", "<leader>qk", "<cmd>cprev<CR>", { desc = "[Q]uickfix [K](up)" })
