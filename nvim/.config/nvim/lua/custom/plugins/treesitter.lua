@@ -8,7 +8,7 @@ return {
     config = function()
       ---@diagnostic disable-next-line: missing-fields
       require("nvim-treesitter.configs").setup({
-        ensure_installed = { "c", "cpp", "rust", "lua", "vim", "vimdoc", "query", "markdown", "markdown_inline", "nu", "json", "yaml", "bash" },
+        ensure_installed = { "c", "cpp", "rust", "lua", "vim", "vimdoc", "query", "json", "yaml", "bash" },
 
         -- Automatically install missing parsers when entering buffer
         -- Recommendation: set to false if you don't have `tree-sitter` CLI installed locally
@@ -30,6 +30,9 @@ return {
           --disable = { "c", "rust" },
           -- Or use a function for more flexibility, e.g. to disable slow treesitter highlight for large files
           disable = function(lang, buf)
+            if lang == "markdown" or lang == "markdown_inline" then
+              return true
+            end
             local max_filesize = 100 * 1024 -- 100 KB
             local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
             if ok and stats and stats.size > max_filesize then

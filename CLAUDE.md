@@ -40,6 +40,7 @@ Each package directory follows the stow convention (`<package>/<path-relative-to
 The config uses **lazy.nvim** directly (LazyVim framework is intentionally disabled). Plugin declarations all live in `lua/custom/plugins/` and are auto-imported by `lua/config/lazy.lua`.
 
 Key files:
+
 - `plugin/keymaps.lua` — global keymaps (leader = `<Space>`)
 - `plugin/opts.lua` — vim options
 - `plugin/filetypes.lua` — filetype-specific settings
