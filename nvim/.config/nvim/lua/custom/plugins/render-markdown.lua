@@ -1,10 +1,10 @@
-return {
-  {
-    "MeanderingProgrammer/render-markdown.nvim",
-    dependencies = { "nvim-treesitter/nvim-treesitter" },
-    ft = { "markdown" },
-    opts = {
-      render_modes = { "n", "c" },
-    },
-  },
-}
+-- return {
+--   {
+--     "MeanderingProgrammer/render-markdown.nvim",
+--     dependencies = { "nvim-treesitter/nvim-treesitter" },
+--     ft = { "markdown" },
+--     opts = {
+--       render_modes = { "n", "c" },
+--     },
+--   },
+-- }
