@@ -15,6 +15,7 @@ return {
       { "<leader>u", group = "[U]ndo" },
       { "<leader>h", group = "[H]arpoon and git [H]elp" },
       { "<leader>x", group = "E[x]ceptions and E[x]ecutions" },
+      { "<leader>?", desc = "Contextual cheatsheet" },
       --{ '<leader>w', proxy = '<c-w>',   group = 'windows' },
     })
   end,
