@@ -6,6 +6,7 @@ return {
     config = function()
       vim.g.rustaceanvim = {
         server = {
+          cmd = { "rustup", "run", "stable", "rust-analyzer" },
           capabilities = require("blink.cmp").get_lsp_capabilities(),
           default_settings = {
             ["rust-analyzer"] = {

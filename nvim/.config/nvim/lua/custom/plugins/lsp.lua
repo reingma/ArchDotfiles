@@ -38,7 +38,7 @@ return {
       local servers = {
         bashls = true,
         lua_ls = {},
-        -- rust_analyzer is managed by rustaceanvim, not lspconfig
+        -- rust_analyzer is managed by rustaceanvim (uses rustup-managed binary)
         templ = true,
         pyright = true,
         gopls = true,
@@ -95,7 +95,6 @@ return {
       local ensure_installed = {
         "stylua",
         "lua_ls",
-        "rust_analyzer", -- managed by rustaceanvim, installed by Mason
       }
       vim.list_extend(ensure_installed, servers_to_install)
       require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
