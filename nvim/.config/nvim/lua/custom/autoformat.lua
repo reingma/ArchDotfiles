@@ -8,7 +8,10 @@ local setup = function()
       rust = { "rustfmt" },
       lua = { "stylua" },
       markdown = { "markdownlint-cli2", "prettier" },
+      json = { "prettier" },
+      yaml = { "prettier" },
       sh = { "shfmt" },
+      bash = { "shfmt" },
     },
   })
 
