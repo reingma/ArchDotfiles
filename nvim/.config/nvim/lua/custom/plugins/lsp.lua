@@ -35,11 +35,10 @@ return {
       end
 
       local capabilities = require("blink.cmp").get_lsp_capabilities()
-      local lspconfig = require("lspconfig")
       local servers = {
         bashls = true,
         lua_ls = {},
-        rust_analyzer = true,
+        -- rust_analyzer is managed by rustaceanvim, not lspconfig
         templ = true,
         pyright = true,
         gopls = true,
@@ -48,7 +47,9 @@ return {
         marksman = true,
         neocmake = true,
         ts_ls = {
-          root_dir = require("lspconfig").util.root_pattern("package.json"),
+          root_dir = function(bufname)
+            return vim.fs.root(bufname, { "package.json" })
+          end,
           single_file = false,
           server_capabilities = {
             documentFormattingProvider = false,
@@ -94,10 +95,10 @@ return {
       local ensure_installed = {
         "stylua",
         "lua_ls",
+        "rust_analyzer", -- managed by rustaceanvim, installed by Mason
       }
       vim.list_extend(ensure_installed, servers_to_install)
       require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
-      lspconfig.lua_ls.setup({ capabilities = capabilities })
       for name, config in pairs(servers) do
         if config == true then
           config = {}
@@ -106,8 +107,9 @@ return {
           capabilities = capabilities,
         }, config)
 
-        lspconfig[name].setup(config)
+        vim.lsp.config(name, config)
       end
+      vim.lsp.enable(vim.tbl_keys(servers))
 
       vim.api.nvim_create_autocmd("LspAttach", {
         callback = function(args)

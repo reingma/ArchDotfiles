@@ -1,0 +1,128 @@
+---
+- name: Bootstrap Arch development environment
+  hosts: localhost
+  connection: local
+
+  vars:
+    dotfiles_dir: "{{ lookup('env', 'HOME') }}/.dotfiles"
+
+    pacman_packages:
+      # core tooling
+      - base-devel
+      - git
+      - stow
+      - ripgrep
+      - fd
+      - fzf
+      - jq
+      - yq
+      - direnv
+      - zoxide
+      - eza
+      # shell
+      - zsh
+      - nushell
+      # editor
+      - neovim
+      # wayland / desktop
+      - sway
+      - swayidle
+      - swaylock
+      - waybar
+      - mako
+      - kanshi
+      - grim
+      - brightnessctl
+      - wmenu
+      - wl-clipboard
+      - pavucontrol
+      # terminal
+      - ghostty
+      - tmux
+      # apps
+      - qutebrowser
+      - zathura
+      - zathura-pdf-mupdf
+      - obsidian
+      - discord
+      # languages / compilers
+      - clang
+      - sqlite
+      # prompt
+      - starship
+
+    aur_packages:
+      - carapace-bin
+      - youtube-music-bin
+      - htmlq
+      - ttf-sourcecodepro-nerd   # matches sway font
+
+    stow_packages:
+      - cheatsheet
+      - ghostty
+      - kanshi
+      - mako
+      - nushell
+      - nvim
+      - sessionizer
+      - starship
+      - sway
+      - templates
+      - tmux
+      - user-dirs
+      - wallpapers
+      - waybar
+      - zathura
+      - zsh
+
+  tasks:
+    # ── paru bootstrap ────────────────────────────────────────────────────────
+    - name: Check if paru is installed
+      ansible.builtin.command: which paru
+      register: paru_check
+      failed_when: false
+      changed_when: false
+
+    - name: Clone paru-bin from AUR
+      ansible.builtin.git:
+        repo: https://aur.archlinux.org/paru-bin.git
+        dest: /tmp/paru-bin
+        depth: 1
+      when: paru_check.rc != 0
+
+    - name: Build and install paru
+      ansible.builtin.command:
+        cmd: makepkg -si --noconfirm
+        chdir: /tmp/paru-bin
+        creates: /usr/bin/paru
+      when: paru_check.rc != 0
+
+    # ── packages ──────────────────────────────────────────────────────────────
+    - name: Install official packages
+      become: true
+      community.general.pacman:
+        name: "{{ pacman_packages }}"
+        state: present
+        update_cache: true
+
+    - name: Install AUR packages
+      kewlfft.aur.aur:
+        name: "{{ aur_packages }}"
+        use: paru
+        state: present
+
+    # ── dotfiles ──────────────────────────────────────────────────────────────
+    - name: Stow dotfiles
+      ansible.builtin.command:
+        cmd: stow --restow --target={{ lookup('env', 'HOME') }} {{ item }}
+        chdir: "{{ dotfiles_dir }}"
+      loop: "{{ stow_packages }}"
+      register: stow_result
+      changed_when: stow_result.stdout != ""
+
+    # ── shell ─────────────────────────────────────────────────────────────────
+    - name: Set zsh as default shell
+      become: true
+      ansible.builtin.user:
+        name: "{{ lookup('env', 'USER') }}"
+        shell: /usr/bin/zsh

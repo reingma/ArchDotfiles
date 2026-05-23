@@ -5,6 +5,7 @@ local setup = function()
     formatters_by_ft = {
       cpp = { "clang-format" },
       c = { "clang-format" },
+      rust = { "rustfmt" },
       lua = { "stylua" },
       markdown = { "markdownlint-cli2", "prettier" },
       sh = { "shfmt" },
@@ -34,7 +35,5 @@ local setup = function()
     end,
   })
 end
-
-setup()
 
 return { setup = setup }
