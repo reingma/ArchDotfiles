@@ -1,4 +1,4 @@
-require("luasnip-helpers")
+local helpers = require("luasnip-helpers")
 
 local in_mathzone = function()
   return vim.fn["vimtex#syntax#in_mathzone"]() == 1
