@@ -16,7 +16,7 @@ stow nvim
 stow */
 ```
 
-Required software is listed in `TODOS.md`. The `ansible/` directory contains an Ansible config intended to automate system setup (library points to a local `ansible-aur` module — not yet fully built out).
+Never run `stow .` — it links every top-level directory into `~`. Fresh-install package lists and stow usage docs are in `README.md`.
 
 ## Repository Structure
 
@@ -34,6 +34,11 @@ Each package directory follows the stow convention (`<package>/<path-relative-to
 - **`waybar/`** — Waybar status bar (`~/.config/waybar/`)
 - **`kanshi/`** — Wayland display config (`~/.config/kanshi/`)
 - **`mako/`** — Wayland notification daemon (`~/.config/mako/`)
+- **`zathura/`** — PDF viewer config (`~/.config/zathura/`)
+- **`cheatsheet/`** — cheat.sh helper script (`~/.local/scripts/`)
+- **`go/`** — Go env file setting XDG GOPATH/GOBIN (`~/.config/go/env`)
+- **`user-dirs/`** — XDG user directories (`~/.config/user-dirs.*`)
+- **`wallpapers/`** — wallpapers (`~/Pictures/`)
 
 ## Neovim Architecture
 
