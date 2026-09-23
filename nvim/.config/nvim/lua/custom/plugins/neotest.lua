@@ -6,14 +6,20 @@ return {
       "nvim-lua/plenary.nvim",
       "antoinemadec/FixCursorHold.nvim",
       "rouge8/neotest-rust",
+      { "fredrikaverpil/neotest-golang", version = "*" },
     },
-    ft = { "rust" },
+    ft = { "rust", "go" },
     config = function()
       require("neotest").setup({
         adapters = {
           require("neotest-rust")({
             -- uses `cargo nextest` if installed, falls back to `cargo test`
             args = { "--no-capture" },
+          }),
+          require("neotest-golang")({
+            -- gotestsum (installed via Mason) avoids go test's stdout parsing issues
+            runner = "gotestsum",
+            go_test_args = { "-v", "-race", "-count=1" },
           }),
         },
       })
@@ -30,6 +36,7 @@ return {
       map("<leader>tS", function() nt.summary.toggle() end,                 "[T]est [S]ummary")
       map("<leader>to", function() nt.output_panel.toggle() end,            "[T]est [O]utput")
       map("<leader>tx", function() nt.run.stop() end,                       "[T]est stop [X]")
+      map("<leader>td", function() nt.run.run({ strategy = "dap" }) end,    "[T]est [D]ebug nearest")
     end,
   },
 }

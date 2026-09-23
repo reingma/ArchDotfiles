@@ -41,7 +41,45 @@ return {
         -- rust_analyzer is managed by rustaceanvim (uses rustup-managed binary)
         templ = true,
         pyright = true,
-        gopls = true,
+        gopls = {
+          settings = {
+            gopls = {
+              gofumpt = true,
+              staticcheck = true,
+              semanticTokens = true,
+              usePlaceholders = false,
+              completeUnimported = true,
+              directoryFilters = { "-.git", "-node_modules" },
+              analyses = {
+                nilness = true,
+                shadow = true,
+                unusedparams = true,
+                unusedwrite = true,
+                useany = true,
+              },
+              codelenses = {
+                generate = true,
+                test = true,
+                tidy = true,
+                upgrade_dependency = true,
+                vendor = true,
+              },
+              hints = {
+                assignVariableTypes = true,
+                compositeLiteralFields = true,
+                constantValues = true,
+                functionTypeParameters = true,
+                parameterNames = true,
+                rangeVariableTypes = true,
+              },
+            },
+          },
+        },
+        -- Terraform: terraform-ls for completion/docs, tflint for provider-aware lint rules
+        terraformls = true,
+        tflint = true,
+        dockerls = true,
+        docker_compose_language_service = true,
         zls = true,
         hls = true,
         marksman = true,
@@ -82,6 +120,26 @@ return {
           filetypes = { "c", "cpp", "objc", "objcpp" },
         },
         tailwindcss = true,
+        -- LaTeX: completion for \ref/\cite, labels, chktex diagnostics.
+        -- Building and viewing stay with vimtex.
+        texlab = {
+          settings = {
+            texlab = {
+              chktex = { onOpenAndSave = true },
+            },
+          },
+        },
+        -- Grammar checker for prose (cover letters, blog posts, commit messages)
+        harper_ls = {
+          filetypes = { "tex", "markdown", "gitcommit" },
+          settings = {
+            ["harper-ls"] = {
+              dialect = "American",
+              -- vim's own spell checker already covers spelling (zg to add words)
+              linters = { SpellCheck = false },
+            },
+          },
+        },
       }
       local servers_to_install = vim.tbl_filter(function(key)
         local t = servers[key]
@@ -99,6 +157,14 @@ return {
         "markdownlint-cli2",
         "shfmt",
         "shellcheck",
+        "tex-fmt",
+        -- go
+        "goimports",
+        "gofumpt",
+        "golangci-lint",
+        "gotestsum",
+        -- docker
+        "hadolint",
       }
       vim.list_extend(ensure_installed, servers_to_install)
       require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
@@ -135,6 +201,13 @@ return {
           map("<leader>cr", vim.lsp.buf.rename, "[C]ode [R]ename")
           map("<leader>ca", vim.lsp.buf.code_action, "[C]ode [A]ction")
           map("<leader>wd", require("telescope.builtin").lsp_document_symbols, "[W]orking [D]ocument symbols")
+          map("<leader>th", function()
+            vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = bufnr }), { bufnr = bufnr })
+          end, "[T]oggle inlay [H]ints")
+          if client:supports_method("textDocument/codeLens") then
+            map("<leader>cl", vim.lsp.codelens.run, "[C]ode [L]ens run")
+            vim.lsp.codelens.enable(true, { bufnr = bufnr })
+          end
 
           require("custom.autoformat").setup()
 

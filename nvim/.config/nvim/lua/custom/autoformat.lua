@@ -12,8 +12,17 @@ local setup = function()
       yaml = { "prettier" },
       sh = { "shfmt" },
       bash = { "shfmt" },
+      tex = { "tex-fmt" },
+      go = { "goimports", "gofumpt" },
+      terraform = { "terraform_fmt" },
+      ["terraform-vars"] = { "terraform_fmt" },
     },
   })
+
+  -- don't rewrap prose; only fix indentation
+  conform.formatters["tex-fmt"] = {
+    prepend_args = { "--nowrap" },
+  }
 
   conform.formatters.injected = {
     options = {
