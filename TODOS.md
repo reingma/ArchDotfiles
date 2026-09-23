@@ -1,5 +1,4 @@
 setup sway
-setup ansible with all required software here
 
 Required software:
 rg
