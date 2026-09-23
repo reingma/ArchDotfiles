@@ -1,4 +1,5 @@
--- Neovim 0.12+ has built-in treesitter highlighting — no nvim-treesitter needed.
+-- Neovim 0.12+ has built-in treesitter highlighting — no nvim-treesitter needed,
+-- but it has to be started per buffer (tree-sitter-manager does that below).
 -- Bundled parsers: c, lua, vim, vimdoc, query, markdown, markdown_inline
 -- This plugin handles installation of everything else.
 return {
@@ -8,10 +9,25 @@ return {
     config = function()
       require("tree-sitter-manager").setup({
         -- only list parsers NOT bundled in 0.12
-        ensure_installed = { "cpp", "rust", "json", "yaml", "bash" },
+        ensure_installed = {
+          "cpp",
+          "rust",
+          "json",
+          "yaml",
+          "bash",
+          "go",
+          "gomod",
+          "gosum",
+          "gowork",
+          "hcl",
+          "terraform",
+          "dockerfile",
+        },
         auto_install = false,
-        highlight = false, -- 0.12 enables this automatically
+        -- 0.12 only auto-starts highlighting for a few filetypes (e.g. lua), so start it on FileType
+        highlight = true,
       })
+      vim.treesitter.language.register("yaml", "yaml.docker-compose")
 
       -- disable treesitter in floating windows (hover, etc.) and large files
       vim.api.nvim_create_autocmd("BufWinEnter", {

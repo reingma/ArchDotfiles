@@ -6,6 +6,8 @@ return {
         markdown = { "markdownlint-cli2" },
         sh = { "shellcheck" },
         bash = { "shellcheck" },
+        go = { "golangcilint" },
+        dockerfile = { "hadolint" },
       }
       vim.api.nvim_create_autocmd("BufWritePost", {
         group = vim.api.nvim_create_augroup("custom-lint", { clear = true }),

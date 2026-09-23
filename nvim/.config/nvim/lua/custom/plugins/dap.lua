@@ -6,6 +6,7 @@ return {
       "nvim-neotest/nvim-nio",
       "theHamsta/nvim-dap-virtual-text",
       "jay-babu/mason-nvim-dap.nvim",
+      "leoluz/nvim-dap-go",
     },
     config = function()
       local dap = require("dap")
@@ -13,7 +14,7 @@ return {
 
       -- install codelldb via Mason (works for C, C++, and Rust)
       require("mason-nvim-dap").setup({
-        ensure_installed = { "codelldb" },
+        ensure_installed = { "codelldb", "delve" },
         automatic_installation = true,
         handlers = {},
       })
@@ -44,6 +45,9 @@ return {
         },
       }
       dap.configurations.c = dap.configurations.cpp
+
+      -- delve adapter + go configs (debug file/test/attach); also used by neotest-golang
+      require("dap-go").setup()
 
       -- UI auto-opens/closes with debug sessions
       dapui.setup()
