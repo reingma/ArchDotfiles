@@ -16,6 +16,41 @@ local function make_window(nlines)
   }
 end
 
+local function concat(...)
+  local out = {}
+  for _, t in ipairs({ ... }) do
+    vim.list_extend(out, t)
+  end
+  return out
+end
+
+-- stylua: ignore
+local prose = {
+  "## Spelling  (vim spell — red undercurl)",
+  "  ]s / [s   next / prev misspelled word",
+  "  z=        suggestions for word under cursor (type number to pick)",
+  "  1z=       accept first suggestion",
+  "  zg        add word to dictionary   (spell/en.utf-8.add, tracked in dotfiles)",
+  "  zw        mark word as wrong       zug / zuw  undo zg / zw",
+  "",
+  "## Grammar  (harper-ls — LSP diagnostics)",
+  "  ]d / [d      next / prev diagnostic",
+  "  <leader>er   explain issue in float  (\"harper-ls: …\")",
+  "  <leader>ca   apply suggested fix (code action)",
+  "  <leader>sd   list all diagnostics (Telescope)",
+  "  No float on a red word → it's a spelling mark, use z=",
+}
+
+-- stylua: ignore
+local render_markdown = {
+  "## Markdown (render-markdown.nvim)",
+  "  Renders inline in normal mode: headings, code blocks, bullets, tables",
+  "  :RenderMarkdown enable   turn on for buffer",
+  "  :RenderMarkdown disable  turn off for buffer",
+  "  :RenderMarkdown toggle   toggle",
+  "  Rendering is active in normal + command mode; off in insert (edit freely)",
+}
+
 -- stylua: ignore
 local sheets = {
   -- ── LaTeX ──────────────────────────────────────────────────────────────
@@ -105,6 +140,9 @@ local sheets = {
     "  dsc  delete cmd    csc  change cmd    ds$  delete math    tsf  toggle frac",
   },
 
+  -- ── Markdown ───────────────────────────────────────────────────────────
+  markdown = concat({ "# Markdown Cheatsheet", "" }, prose, { "" }, render_markdown),
+
   -- ── Default (all other filetypes) ──────────────────────────────────────
   default = {
     "# Neovim Cheatsheet",
@@ -177,15 +215,11 @@ local sheets = {
     "",
     "## Snippet Navigation  (LuaSnip)",
     "  <C-L>  jump forward    <C-K>  jump backward",
-    "",
-    "## Markdown (render-markdown.nvim)",
-    "  Renders inline in normal mode: headings, code blocks, bullets, tables",
-    "  :RenderMarkdown enable   turn on for buffer",
-    "  :RenderMarkdown disable  turn off for buffer",
-    "  :RenderMarkdown toggle   toggle",
-    "  Rendering is active in normal + command mode; off in insert (edit freely)",
   },
 }
+
+vim.list_extend(sheets.tex, concat({ "" }, prose))
+vim.list_extend(sheets.default, concat({ "" }, render_markdown))
 
 local function open(ft)
   local lines = sheets[ft] or sheets.default
