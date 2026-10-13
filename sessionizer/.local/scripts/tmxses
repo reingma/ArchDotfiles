@@ -3,7 +3,7 @@
 if [[ $# -eq 1 ]]; then
     session_loc=$1
 else
-    session_loc=$(find ~/dev/research/ ~/dev/jobsearch/ ~/dev/projects/ ~/dev/unframed/ ~/dev/contributions/ -mindepth 1 -maxdepth 1 -type d -printf '%p\n' | sort | uniq | fzf)
+    session_loc=$(find ~/dev/research/ ~/dev/jobsearch/ ~/dev/projects/ ~/dev/ ~/dev/contributions/ -mindepth 1 -maxdepth 1 -type d -printf '%p\n' | sort | uniq | fzf)
 fi
 
 if [[ -z $session_loc ]]; then
