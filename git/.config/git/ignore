@@ -1,0 +1,22 @@
+# Claude Code
+**/.claude/settings.local.json
+
+# Editors
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# direnv
+.direnv/
+
+# OS / desktop
+.DS_Store
+.directory
+
+# LaTeX build artefacts
+*.aux
+*.fls
+*.fdb_latexmk
+*.synctex.gz

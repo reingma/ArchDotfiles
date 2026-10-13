@@ -20,7 +20,9 @@ made through either path change the same file, so they're tracked by git.
 | Package       | Links to                                             |
 | ------------- | ---------------------------------------------------- |
 | `cheatsheet`  | `~/.local/scripts/cheat-sh`, `~/.local/scripts/data` |
+| `gh`          | `~/.config/gh/config.yml` (`hosts.yml` is ignored)   |
 | `ghostty`     | `~/.config/ghostty/`                                 |
+| `git`         | `~/.config/git/config`, `~/.config/git/ignore`       |
 | `go`          | `~/.config/go/env` (GOPATH/GOBIN in XDG dirs)        |
 | `kanshi`      | `~/.config/kanshi/`                                  |
 | `mako`        | `~/.config/mako/`                                    |
@@ -29,7 +31,7 @@ made through either path change the same file, so they're tracked by git.
 | `sessionizer` | `~/.local/scripts/tmxses`, `git-tree-sessionizer`    |
 | `starship`    | `~/.config/starship.toml`                            |
 | `sway`        | `~/.config/sway/`, `~/.local/scripts_no_path/`       |
-| `templates`   | `~/.local/scripts/cppTemplate.sh`                    |
+| `templates`   | `~/.local/scripts/{cppTemplate.sh,pr-template}`, `~/.local/share/pr-templates/` |
 | `tmux`        | `~/.tmux.conf`                                       |
 | `user-dirs`   | `~/.config/user-dirs.dirs`, `user-dirs.locale`       |
 | `wallpapers`  | `~/Pictures/stormlight.png`                          |
@@ -83,11 +85,89 @@ the link should go. Either move it into the package (step 2) or let stow do it w
 `stow --adopt foo` — this **overwrites the repo copy with the file from `~`**, so
 check `git diff` afterwards and `git checkout` anything you want to keep.
 
+## Git and GitHub
+
+### git
+
+`git/.config/git/config` holds everything except identity: `user.name` and
+`user.email` stay in an untracked `~/.gitconfig` (git reads both files).
+
+- Diffs and `git add -p` go through [delta](https://github.com/dandavison/delta);
+  `n` / `N` jump between files.
+- `git pull` rebases, `git push` sets the upstream on first push, `git fetch` prunes.
+- `https://github.com/...` URLs are rewritten to SSH, so an SSH key registered with
+  GitHub is required for cloning anything from there.
+- `git/.config/git/ignore` is the global ignore file.
+
+### gh
+
+`gh/.config/gh/config.yml` is tracked. The token lives in `~/.config/gh/hosts.yml`,
+which is gitignored; on a new machine run `gh auth login -h github.com` (choose SSH).
+
+`gh config set` and `gh alias set` write through the symlink, so they show up here as
+diffs.
+
+`origin` is always the default repo, including in forks that also have an `upstream`
+remote, so `gh` never asks which one to use. That comes from `[remote "origin"]
+gh-resolved = base` in the git config. To target another remote in one repo, run
+`gh repo set-default` there.
+
+Aliases:
+
+| Alias        | Runs                                       | Use                              |
+| ------------ | ------------------------------------------ | -------------------------------- |
+| `gh co 123`  | `gh pr checkout 123`                       | check out a PR locally           |
+| `gh pv`      | `gh pr view --web`                         | open this branch's PR in browser |
+| `gh rv`      | `gh repo view --web`                       | open the repo in browser         |
+| `gh mine`    | `gh search prs --author=@me --state=open`  | my open PRs, all repos           |
+| `gh reviews` | `gh search prs --review-requested=@me ...` | PRs waiting on my review         |
+
+Everyday commands:
+
+```bash
+gh pr create              # open a PR for the current branch (uses the repo's PR template)
+gh pr create --draft --fill   # draft PR, title and body from the commits
+gh pr status              # PRs for this branch, mine, and review requests in this repo
+gh pr checks --watch      # follow CI for the current PR
+gh pr diff                # the PR diff, through delta
+gh pr merge --squash --delete-branch
+gh repo clone owner/name
+gh repo fork --remote     # fork and add the remote
+gh issue list / gh issue create
+gh run list / gh run watch    # GitHub Actions
+```
+
+In Neovim the same things are under `<leader>o` (octo) and `<leader>g` (diffview);
+see `nvim/.config/nvim/README.md`.
+
+### PR templates
+
+Templates are Markdown files in `templates/.local/share/pr-templates/` (linked to
+`~/.local/share/pr-templates/`). `pr-template` copies one into the current repo as
+`.github/pull_request_template.md`.
+
+```bash
+pr-template linear       # install the "linear" template in this repo
+pr-template              # pick one with fzf (with preview)
+pr-template -l linear    # install but keep it out of git (.git/info/exclude)
+pr-template -f linear    # overwrite an existing template without asking
+pr-template -L           # list templates
+pr-template -e linear    # edit a template, or create it if it doesn't exist
+```
+
+Without `-l` the file is left untracked for you to commit; once it is on the default
+branch GitHub pre-fills every new PR with it, for everyone. Use `-l` in repos where
+you don't own the conventions and only want the template for your own
+`gh pr create`.
+
+To add a template, drop a new `.md` file in the directory (or `pr-template -e name`).
+No restow is needed.
+
 ## Fresh install
 
 ```bash
 # 1. core packages
-sudo pacman -S --needed base-devel git stow ripgrep fd fzf jq yq direnv zoxide eza \
+sudo pacman -S --needed base-devel git git-delta github-cli stow ripgrep fd fzf jq yq direnv zoxide eza \
   zsh nushell neovim ghostty tmux starship \
   sway swayidle swaylock waybar mako kanshi grim brightnessctl wmenu wl-clipboard pavucontrol \
   qutebrowser zathura zathura-pdf-mupdf obsidian discord \

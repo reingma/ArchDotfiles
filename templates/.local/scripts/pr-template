@@ -1,0 +1,109 @@
+#!/usr/bin/env bash
+# Install one of the PR templates from ~/.local/share/pr-templates into the
+# current repo as .github/pull_request_template.md.
+
+template_dir="${XDG_DATA_HOME:-$HOME/.local/share}/pr-templates"
+target_rel=".github/pull_request_template.md"
+
+usage() {
+	cat <<EOF
+Usage: pr-template [options] [name]
+
+Without a name, pick a template with fzf.
+
+  -l, --local   keep the template out of git (adds it to .git/info/exclude)
+  -f, --force   overwrite an existing template without asking
+  -L, --list    list available templates
+  -e, --edit    edit (or create) the named template in \$EDITOR
+EOF
+}
+
+list_templates() {
+	find -L "$template_dir" -maxdepth 1 -name '*.md' -printf '%f\n' 2> /dev/null | sed 's/\.md$//' | sort
+}
+
+local_only=0
+force=0
+edit=0
+name=""
+
+while [[ $# -gt 0 ]]; do
+	case $1 in
+		-l | --local) local_only=1 ;;
+		-f | --force) force=1 ;;
+		-e | --edit) edit=1 ;;
+		-L | --list)
+			list_templates
+			exit 0
+			;;
+		-h | --help)
+			usage
+			exit 0
+			;;
+		-*)
+			usage >&2
+			exit 2
+			;;
+		*) name=$1 ;;
+	esac
+	shift
+done
+
+if [[ -z $name ]]; then
+	name=$(list_templates | fzf --prompt 'PR template> ' --preview "cat '$template_dir'/{}.md")
+fi
+
+if [[ -z $name ]]; then
+	exit 0
+fi
+
+source_file="$template_dir/$name.md"
+
+if [[ $edit -eq 1 ]]; then
+	exec "${EDITOR:-nvim}" "$source_file"
+fi
+
+if [[ ! -f $source_file ]]; then
+	echo "pr-template: no template named '$name'. Available:" >&2
+	list_templates | sed 's/^/  /' >&2
+	exit 1
+fi
+
+repo_root=$(git rev-parse --show-toplevel 2> /dev/null)
+if [[ -z $repo_root ]]; then
+	echo "pr-template: not inside a git repository" >&2
+	exit 1
+fi
+
+target="$repo_root/$target_rel"
+
+# GitHub also reads templates from these places; flag them so two don't compete.
+for other in pull_request_template.md PULL_REQUEST_TEMPLATE.md docs/pull_request_template.md \
+	docs/PULL_REQUEST_TEMPLATE.md .github/PULL_REQUEST_TEMPLATE.md .github/PULL_REQUEST_TEMPLATE; do
+	if [[ -e "$repo_root/$other" ]] && [[ ! "$repo_root/$other" -ef $target ]]; then
+		echo "pr-template: warning: repo already has $other" >&2
+	fi
+done
+
+if cmp -s "$source_file" "$target"; then
+	echo "$target_rel already matches '$name'"
+else
+	if [[ -e $target ]] && [[ $force -eq 0 ]]; then
+		read -r -p "$target_rel exists and differs. Overwrite? [y/N] " answer
+		if [[ $answer != [yY]* ]]; then
+			exit 1
+		fi
+	fi
+	mkdir -p "$(dirname "$target")"
+	cp "$source_file" "$target"
+	echo "installed '$name' -> $target_rel"
+fi
+
+if [[ $local_only -eq 1 ]]; then
+	exclude_file=$(git rev-parse --path-format=absolute --git-path info/exclude)
+	mkdir -p "$(dirname "$exclude_file")"
+	if ! grep -qxF "/$target_rel" "$exclude_file" 2> /dev/null; then
+		echo "/$target_rel" >> "$exclude_file"
+	fi
+	echo "excluded from git via ${exclude_file#"$repo_root"/}"
+fi

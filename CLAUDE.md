@@ -27,7 +27,7 @@ Each package directory follows the stow convention (`<package>/<path-relative-to
 - **`tmux/`** — tmux config (`~/.tmux.conf`)
 - **`sway/`** — Sway WM config + helper scripts (`~/.config/sway/`)
 - **`sessionizer/`** — tmux session management scripts (`~/.local/scripts/`)
-- **`templates/`** — Project scaffolding scripts (`~/.local/scripts/`)
+- **`templates/`** — Project scaffolding scripts (`~/.local/scripts/`) + PR templates installed per repo by `pr-template <name>` (`~/.local/share/pr-templates/`)
 - **`nushell/`** — Nushell config files (`~/.config/nushell/`)
 - **`starship/`** — Starship prompt config (`~/.config/starship.toml`)
 - **`ghostty/`** — Ghostty terminal config (`~/.config/ghostty/`)
@@ -36,6 +36,8 @@ Each package directory follows the stow convention (`<package>/<path-relative-to
 - **`mako/`** — Wayland notification daemon (`~/.config/mako/`)
 - **`zathura/`** — PDF viewer config (`~/.config/zathura/`)
 - **`cheatsheet/`** — cheat.sh helper script (`~/.local/scripts/`)
+- **`git/`** — Git config (delta pager) + global ignore (`~/.config/git/`); identity stays in untracked `~/.gitconfig`
+- **`gh/`** — GitHub CLI config + aliases (`~/.config/gh/config.yml`); `hosts.yml` holds the token and is gitignored
 - **`go/`** — Go env file setting XDG GOPATH/GOBIN (`~/.config/go/env`)
 - **`user-dirs/`** — XDG user directories (`~/.config/user-dirs.*`)
 - **`wallpapers/`** — wallpapers (`~/Pictures/`)
