@@ -34,6 +34,9 @@ return {
         return
       end
 
+      -- formatting is independent of LSP attach, so set it up once here
+      require("custom.autoformat").setup()
+
       local capabilities = require("blink.cmp").get_lsp_capabilities()
       local servers = {
         bashls = true,
@@ -81,16 +84,61 @@ return {
         dockerls = true,
         docker_compose_language_service = true,
         zls = true,
+        -- Odin: ols (Mason package also ships odinfmt). Needs the odin compiler for core/base libs.
+        ols = {
+          init_options = {
+            enable_semantic_tokens = true,
+            enable_document_symbol = true,
+            enable_hover = true,
+            enable_snippets = true,
+            enable_inlay_hints_params = true,
+            enable_inlay_hints_default_params = true,
+            enable_references = true,
+            enable_format = false, -- conform runs odinfmt
+            checker_args = "-vet -strict-style",
+          },
+        },
         hls = true,
         marksman = true,
         neocmake = true,
-        ts_ls = {
-          root_dir = function(bufname)
-            return vim.fs.root(bufname, { "package.json" })
-          end,
-          single_file = false,
+        -- TypeScript/JavaScript/React: vtsls wraps the VSCode TS extension (faster than
+        -- ts_ls, better refactors, auto-imports). Formatting is left to prettier via conform.
+        vtsls = {
           server_capabilities = {
             documentFormattingProvider = false,
+            documentRangeFormattingProvider = false,
+          },
+          settings = {
+            complete_function_calls = false,
+            vtsls = {
+              autoUseWorkspaceTsdk = true,
+              enableMoveToFileCodeAction = true,
+              experimental = {
+                completion = { enableServerSideFuzzyMatch = true },
+              },
+            },
+            typescript = {
+              updateImportsOnFileMove = { enabled = "always" },
+              suggest = { completeFunctionCalls = false },
+              preferences = { importModuleSpecifier = "non-relative" },
+              inlayHints = {
+                enumMemberValues = { enabled = true },
+                functionLikeReturnTypes = { enabled = true },
+                parameterNames = { enabled = "literals" },
+                parameterTypes = { enabled = true },
+                propertyDeclarationTypes = { enabled = true },
+                variableTypes = { enabled = false },
+              },
+            },
+            javascript = {
+              updateImportsOnFileMove = { enabled = "always" },
+            },
+          },
+        },
+        -- ESLint as an LSP: diagnostics + code actions ("fix all" on <leader>ca)
+        eslint = {
+          settings = {
+            workingDirectories = { mode = "auto" },
           },
         },
         jsonls = {
@@ -119,7 +167,29 @@ return {
           init_options = { clangdFileStatus = true },
           filetypes = { "c", "cpp", "objc", "objcpp" },
         },
-        tailwindcss = true,
+        tailwindcss = {
+          -- default list includes markdown/mdx, which spawns it in every notes buffer
+          filetypes = vim.tbl_filter(function(ft)
+            return ft ~= "markdown" and ft ~= "mdx"
+          end, vim.lsp.config.tailwindcss.filetypes or {}),
+          settings = {
+            tailwindCSS = {
+              classAttributes = { "class", "className", "class:list", "classList", "ngClass" },
+              experimental = {
+                -- class completion inside cn(...), clsx(...), cva(...), tw`...`
+                classRegex = {
+                  { "cva\\(((?:[^()]|\\([^()]*\\))*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]" },
+                  { "cx\\(((?:[^()]|\\([^()]*\\))*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)" },
+                  { "cn\\(((?:[^()]|\\([^()]*\\))*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)" },
+                  { "clsx\\(((?:[^()]|\\([^()]*\\))*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)" },
+                  "tw`([^`]*)",
+                },
+              },
+            },
+          },
+        },
+        cssls = true,
+        html = true,
         -- LaTeX: completion for \ref/\cite, labels, chktex diagnostics.
         -- Building and viewing stay with vimtex.
         texlab = {
@@ -154,6 +224,7 @@ return {
         "stylua",
         "lua_ls",
         "prettier",
+        "prettierd",
         "markdownlint-cli2",
         "shfmt",
         "shellcheck",
@@ -188,6 +259,15 @@ return {
           if type(settings) ~= "table" then
             settings = {}
           end
+          -- vim.lsp.config has no server_capabilities field, so apply overrides here
+          if settings.server_capabilities then
+            for k, v in pairs(settings.server_capabilities) do
+              if v == vim.NIL then
+                v = nil
+              end
+              client.server_capabilities[k] = v
+            end
+          end
 
           local map = function(keys, func, desc)
             vim.keymap.set("n", keys, func, { buffer = args.buf, desc = "LSP: " .. desc })
@@ -208,8 +288,6 @@ return {
             map("<leader>cl", vim.lsp.codelens.run, "[C]ode [L]ens run")
             vim.lsp.codelens.enable(true, { bufnr = bufnr })
           end
-
-          require("custom.autoformat").setup()
 
           -- require("lsp_lines").setup()
           -- vim.diagnostic.config { virtual_text = true, virtual_lines = false }

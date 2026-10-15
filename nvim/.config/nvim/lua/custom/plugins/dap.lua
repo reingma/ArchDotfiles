@@ -14,7 +14,7 @@ return {
 
       -- install codelldb via Mason (works for C, C++, and Rust)
       require("mason-nvim-dap").setup({
-        ensure_installed = { "codelldb", "delve" },
+        ensure_installed = { "codelldb", "delve", "js" },
         automatic_installation = true,
         handlers = {},
       })
@@ -46,8 +46,98 @@ return {
       }
       dap.configurations.c = dap.configurations.cpp
 
+      -- Odin emits DWARF, so codelldb debugs it like C
+      dap.configurations.odin = {
+        {
+          name = "Build package (-debug) & launch",
+          type = "codelldb",
+          request = "launch",
+          program = function()
+            local cwd = vim.fn.getcwd()
+            local out = cwd .. "/build/" .. vim.fs.basename(cwd) .. "-debug"
+            vim.fn.mkdir(cwd .. "/build", "p")
+            local res = vim.system({ "odin", "build", ".", "-debug", "-out:" .. out }, { cwd = cwd }):wait()
+            if res.code ~= 0 then
+              vim.notify("odin build failed:\n" .. (res.stderr or ""), vim.log.levels.ERROR)
+              return require("dap").ABORT
+            end
+            return out
+          end,
+          cwd = "${workspaceFolder}",
+          stopOnEntry = false,
+        },
+        {
+          name = "Launch executable",
+          type = "codelldb",
+          request = "launch",
+          program = function()
+            return vim.fn.input("Executable: ", vim.fn.getcwd() .. "/", "file")
+          end,
+          cwd = "${workspaceFolder}",
+          stopOnEntry = false,
+        },
+      }
+
       -- delve adapter + go configs (debug file/test/attach); also used by neotest-golang
       require("dap-go").setup()
+
+      -- js-debug (vscode-js-debug) for Node / TypeScript / React in the browser
+      for _, adapter in ipairs({ "pwa-node", "pwa-chrome" }) do
+        dap.adapters[adapter] = {
+          type = "server",
+          host = "localhost",
+          port = "${port}",
+          executable = {
+            command = vim.fn.exepath("js-debug-adapter"),
+            args = { "${port}" },
+          },
+        }
+      end
+      -- .vscode/launch.json uses "node"/"chrome"; js-debug only understands the pwa-* names
+      for _, alias in ipairs({ "node", "chrome" }) do
+        dap.adapters[alias] = function(cb, config)
+          local pwa = "pwa-" .. alias
+          config.type = pwa
+          local adapter = vim.deepcopy(dap.adapters[pwa])
+          cb(adapter)
+        end
+      end
+
+      local js_filetypes = { "javascript", "typescript", "javascriptreact", "typescriptreact" }
+      for _, ft in ipairs(js_filetypes) do
+        dap.configurations[ft] = {
+          {
+            -- node >= 23 strips TS types natively, so .ts files run directly
+            name = "Launch current file (node)",
+            type = "pwa-node",
+            request = "launch",
+            program = "${file}",
+            cwd = "${workspaceFolder}",
+            sourceMaps = true,
+            skipFiles = { "<node_internals>/**", "node_modules/**" },
+          },
+          {
+            name = "Attach to node process (--inspect)",
+            type = "pwa-node",
+            request = "attach",
+            processId = require("dap.utils").pick_process,
+            cwd = "${workspaceFolder}",
+            sourceMaps = true,
+            skipFiles = { "<node_internals>/**", "node_modules/**" },
+          },
+          {
+            name = "Debug in Chrome (dev server)",
+            type = "pwa-chrome",
+            request = "launch",
+            url = function()
+              return vim.fn.input("URL: ", "http://localhost:5173")
+            end,
+            webRoot = "${workspaceFolder}",
+            sourceMaps = true,
+            userDataDir = false,
+          },
+        }
+      end
 
       -- UI auto-opens/closes with debug sessions
       dapui.setup()

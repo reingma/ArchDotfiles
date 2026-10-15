@@ -89,7 +89,7 @@ LSP keys (active once a server attaches):
 
 | Plugin | Use |
 | ------ | --- |
-| **nvim-dap** + dap-ui + virtual-text + dap-go | `<F5>` start / continue, `<F10>` over, `<F11>` into, `<F12>` out, `<leader>db` breakpoint, `<leader>dB` conditional, `<leader>du` UI, `<leader>dr` REPL, `<leader>dl` run last. Adapters: codelldb (C, C++, Rust), delve (Go) |
+| **nvim-dap** + dap-ui + virtual-text + dap-go | `<F5>` start / continue, `<F10>` over, `<F11>` into, `<F12>` out, `<leader>db` breakpoint, `<leader>dB` conditional, `<leader>du` UI, `<leader>dr` REPL, `<leader>dl` run last. Adapters: codelldb (C, C++, Rust, Odin — "Build package & launch" runs `odin build . -debug`), delve (Go), js-debug (Node/TS: launch file, attach, Chrome; `.vscode/launch.json` works) |
 | **neotest** (Rust, Go) | `<leader>tn` nearest, `<leader>tf` file, `<leader>ts` suite, `<leader>tl` last, `<leader>td` debug nearest, `<leader>tS` summary, `<leader>to` output, `<leader>tx` stop |
 
 ### Git and GitHub

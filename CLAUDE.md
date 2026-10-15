@@ -56,7 +56,7 @@ Key files:
 - `after/ftplugin/` — per-filetype overrides (c, lua, fsharp, lean)
 - `LuaSnip/` — LuaSnip snippets organized by filetype (`tex/`, `py/`, `all.lua`)
 
-Active LSPs (managed via Mason): `clangd`, `rust_analyzer`, `pyright`, `gopls`, `lua_ls`, `ts_ls`, `hls` (Haskell), `zls` (Zig), `templ`, `bashls`, `marksman`, `neocmake`, `jsonls`, `yamlls`, `tailwindcss`.
+Active LSPs (managed via Mason): `clangd`, `rust_analyzer`, `pyright`, `gopls`, `lua_ls`, `vtsls`, `eslint`, `hls` (Haskell), `zls` (Zig), `ols` (Odin), `templ`, `bashls`, `marksman`, `neocmake`, `jsonls`, `yamlls`, `tailwindcss`, `cssls`, `html`.
 
 Completion: `blink.cmp`. Formatting: `conform.nvim` with autoformat on save (`lua/custom/autoformat.lua`). File nav: `oil.nvim`. Fuzzy find: `telescope` + a custom multigrep picker at `lua/custom/plugins/telescope/multigrep.lua`.
 

@@ -5,7 +5,7 @@
 return {
   {
     "romus204/tree-sitter-manager.nvim",
-    build = ":TSMUpdate",
+    build = ":TSUpdate",
     config = function()
       require("tree-sitter-manager").setup({
         -- only list parsers NOT bundled in 0.12
@@ -22,6 +22,19 @@ return {
           "hcl",
           "terraform",
           "dockerfile",
+          "javascript",
+          "typescript",
+          "tsx",
+          "jsdoc",
+          "css",
+          "html",
+          "graphql",
+          "python",
+          "zig",
+          "haskell",
+          "cmake",
+          "templ",
+          "odin",
         },
         auto_install = false,
         -- 0.12 only auto-starts highlighting for a few filetypes (e.g. lua), so start it on FileType
@@ -47,5 +60,11 @@ return {
         end,
       })
     end,
+  },
+  -- auto-close/rename paired JSX/HTML tags
+  {
+    "windwp/nvim-ts-autotag",
+    ft = { "html", "javascriptreact", "typescriptreact", "javascript", "typescript", "xml" },
+    opts = {},
   },
 }
